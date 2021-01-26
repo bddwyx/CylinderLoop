@@ -5,9 +5,9 @@
 #include "CANCommunication.h"
 
 enum CANFactoryStateTypeDef{
-    CAN_FACTORY_ERROR = 0,
-    CAN_FACTORY_OK,
-    CAN_FACTORY_BUSY,
+    CAN_FACTORY_ERROR = HAL_ERROR,
+    CAN_FACTORY_OK = HAL_OK,
+    CAN_FACTORY_BUSY = HAL_BUSY,
 };
 
 class CANFactory{

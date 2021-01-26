@@ -15,6 +15,7 @@ class CANCommunication{
 public:
     explicit CANCommunication(CAN_HandleTypeDef *hcan, CANCommunicationTestMode TestMode = NORMAL);
 
+    HAL_StatusTypeDef CANCommunicationFilterConfig();
     HAL_StatusTypeDef CANCommunicationInit(CANCommunicationTestMode TestMode = NORMAL);
     HAL_StatusTypeDef CANCommunicationChangeTestMode(CANCommunicationTestMode TestMode);
 
