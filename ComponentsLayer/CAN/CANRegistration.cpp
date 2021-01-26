@@ -3,3 +3,5 @@
 //
 
 #include "CANRegistration.h"
+
+//CANCommunication CANCommunication::CAN1Communication;

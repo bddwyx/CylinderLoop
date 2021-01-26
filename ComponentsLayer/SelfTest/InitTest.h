@@ -13,6 +13,6 @@ public:
 
     static InitTest initTest;
 private:
-    bool
+
 };
 #endif //CYLINDERLOOP_INITTEST_H

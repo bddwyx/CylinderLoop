@@ -5,7 +5,10 @@
 #ifndef CYLINDERLOOP_INCLUDES_H
 #define CYLINDERLOOP_INCLUDES_H
 
-#include <stm32f4xx_hal.h>
 #include "defines.h"
+
+#include <main.h>
+#include <can.h>
+
 
 #endif //CYLINDERLOOP_INCLUDES_H

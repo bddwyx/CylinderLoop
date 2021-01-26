@@ -7,14 +7,17 @@
 enum CANFactoryStateTypeDef{
     CAN_FACTORY_ERROR = 0,
     CAN_FACTORY_OK,
+    CAN_FACTORY_BUSY,
 };
 
 class CANFactory{
 public:
-    CANFactory(){};
+    CANFactory();
+
+protected:
 
 private:
-    CAN_HandleTypeDef* hcan;
+
 };
 
 class CANRxFactory:public CANFactory{
@@ -23,7 +26,7 @@ public:
 
     CANFactoryStateTypeDef CANRxFactoryRegistrate();
 
-    static CANRxFactory CAN1RxFactory;
+    static CANRxFactory CAN12RxFactory;
 private:
 };
 
