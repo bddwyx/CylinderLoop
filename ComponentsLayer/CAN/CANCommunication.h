@@ -19,10 +19,16 @@ public:
     HAL_StatusTypeDef CANCommunicationInit(CANCommunicationTestMode TestMode = NORMAL);
     HAL_StatusTypeDef CANCommunicationChangeTestMode(CANCommunicationTestMode TestMode);
 
+    HAL_StatusTypeDef CANCommunicationTxHandler(CAN_TxHeaderTypeDef TxHeader, uint8_t *TxMsg, uint32_t MailBox = CAN_TX_MAILBOX0);
+    HAL_StatusTypeDef CANCommunicationRxHandler();
+
     static CANCommunication CAN1Communication, CAN2Communication;
+
 private:
     CAN_HandleTypeDef* hcan;
     bool CANOnline[2] = {false};
 };
+
+extern "C" void CANCommunicationRxIRQHandler(CAN_HandleTypeDef *hcan);
 
 #endif //CYLINDERLOOP_CANCOMMUNICATION_H
