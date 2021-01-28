@@ -48,7 +48,7 @@ endif ()
 
 include_directories(Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include
         Includes
-        ComponentsLayer/CAN
+        ComponentsLayer/CAN ComponentsLayer/OLED
         Services/SelfTest Services/CommandSystem
         )
 
