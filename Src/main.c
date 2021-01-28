@@ -27,6 +27,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "app_rtthread.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -73,6 +74,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         //RemoteKeyMouseControlLoop();
     }
 }
+
+void HAL_Delay(uint32_t Delay){
+    rt_thread_delay(Delay);
+}
 /* USER CODE END 0 */
 
 /**
@@ -116,6 +121,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   MX_ADC1_Init();
+  MX_RT_Thread_Init();
   /* USER CODE BEGIN 2 */
     MainInit();
     HAL_TIM_Base_Start_IT(&htim6);
@@ -127,6 +133,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+  MX_RT_Thread_Process();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

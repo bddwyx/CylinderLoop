@@ -47,6 +47,7 @@ else ()
 endif ()
 
 include_directories(Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include
+        Middlewares/Third_Party/RT-Thread//include/
         Includes
         ComponentsLayer ComponentsLayer/CAN ComponentsLayer/OLED
         Services/SelfTest Services/CommandSystem
@@ -56,6 +57,7 @@ include_directories(Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_D
 add_definitions(-D__weak=__attribute__\(\(weak\)\) -D__packed=__attribute__\(\(__packed__\)\) -DUSE_HAL_DRIVER -DSTM32F427xx)
 
 file(GLOB_RECURSE SOURCES "startup/*.*" "Drivers/*.*" "Src/*.*"
+        "Middlewares/*.*"
         "ComponentsLayer/*.*"
         "Services/*.*"
         "Frame/*.*"
