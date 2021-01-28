@@ -36,11 +36,11 @@
 /***	MAP	***/
 
 /***	CONSTANT VALUE	***/
-#define X_WIDTH 128
-#define Y_WIDTH 64
+constexpr uint8_t X_WIDTH = 128;
+constexpr uint8_t Y_WIDTH = 64;
 
-#define OLED_CMD 0x00
-#define OLED_DATA 0x01
+constexpr uint8_t OLED_CMD = 0x00;
+constexpr uint8_t OLED_DATA = 0x01;
 
 #define CHAR_SIZE_WIDTH_ASCII 6
 #define CHAR_SIZE_HIGHT_ASCII 12
