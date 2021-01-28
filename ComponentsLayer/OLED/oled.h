@@ -51,7 +51,7 @@
 const uint8_t PowOf2[8] = {0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
 
 #ifdef USE_DJI_EXAMPLE_CODE
-static uint8_t gram[128][8];
+static uint8_t oledBuffer[128][8];
 #endif
 /***	TYPE DEFINE	***/
 
@@ -68,7 +68,7 @@ class OLED{
         GPIO_TypeDef *DC_Port, *Rst_Port;
         uint16_t DC_Pin, Rst_Pin;
 				#ifndef USE_DJI_EXAMPLE_CODE
-        uint8_t gram[128][8];
+        uint8_t oledBuffer[128][8];
 				#endif
         void Error(const char* msg, uint8_t code);
 
@@ -76,7 +76,7 @@ class OLED{
         void CmdClr() {HAL_GPIO_WritePin(DC_Port, DC_Pin, GPIO_PIN_RESET);}
         void RstSet() {HAL_GPIO_WritePin(Rst_Port, Rst_Pin, GPIO_PIN_SET);}
         void RstClr() {HAL_GPIO_WritePin(Rst_Port, Rst_Pin, GPIO_PIN_RESET);}
-        void WriteByte(uint8_t dat, uint8_t cmd);
+        void OLEDWriteByte(uint8_t dat, uint8_t cmd);
         void SetCursor(uint8_t x, uint8_t y);
 
     public:
@@ -85,20 +85,20 @@ class OLED{
         OLED() : DC_Port(OLED_DC_GPIO_Port), Rst_Port(OLED_RST_GPIO_Port), DC_Pin(OLED_DC_Pin), Rst_Pin(OLED_RST_Pin) {}
         OLED(GPIO_TypeDef *_DC_Port, uint16_t _DC_Pin, GPIO_TypeDef *_Rst_Port, uint16_t _Rst_Pin) : DC_Port(_DC_Port), Rst_Port(_Rst_Port), DC_Pin(_DC_Pin), Rst_Pin(_Rst_Pin) {
             for(int i = 0; i < 128; ++i)
-                memset(gram[i], 0, 8*sizeof(uint8_t));
+                memset(oledBuffer[i], 0, 8 * sizeof(uint8_t));
         }
         ~OLED();
         void Init();
         void DisplayOn();
         void DisplayOff();
-        void RefreshGram();
+        void OLEDRefreshBuffer();
 
         void Clear(Pen_e pen);
         void Clear(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height);
         void Invert(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height);
         void DrawPoint(uint8_t x, uint8_t y, Pen_e pen);
         void DrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, Pen_e pen);
-        void DrawRectagle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, Pen_e pen);
+        void DrawRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, Pen_e pen);
         void FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, Pen_e pen);
         void DrawCircle(uint8_t x, uint8_t y, uint8_t radius, Pen_e pen);
         void FillCircle(uint8_t x, uint8_t y, uint8_t radius, Pen_e pen);

@@ -208,7 +208,7 @@ void OLED_UI::PrintString(const char *str){
             }
         }
     }
-    //OLED_UI::device.RefreshGram();
+    //OLED_UI::device.OLEDRefreshBuffer();
 }
 
 void OLED_UI::Init(){
@@ -216,7 +216,7 @@ void OLED_UI::Init(){
     memset(ADC_Val, 0, sizeof(ADC_Val));
     HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC_Val, ADC_CHANNALS);
     OLED_UI::device.Clear(Pen_Clear);
-    OLED_UI::device.RefreshGram();
+    OLED_UI::device.OLEDRefreshBuffer();
 }
 void OLED_UI::LoadRootMenu(const char* _text, std::initializer_list<MenuTerm_Base*> l){
     menu = createFolderTerm(_text, l);
@@ -290,7 +290,7 @@ void OLED_UI::Update(){
     }
     for(uint8_t i = 0; i < 4; ++i)
         OLED_UI::device.DrawLine(0, dividingLineY[i], 127, dividingLineY[i], Pen_Write);
-    OLED_UI::device.RefreshGram();
+    OLED_UI::device.OLEDRefreshBuffer();
 }
 
 void OLED_UI::printf(uint8_t line, const char *fmt, ...){
@@ -348,7 +348,7 @@ void MenuTerm_Folder::Pressed(uint32_t line) {
 OLED_Menu::OLED_Menu() :device(&OLED::_oled_device), currentCursorLine(0){
     // OLED(_DC_Port, _DC_Pin, _Rst_Port, _Rst_Pin);
     for(int i = 0; i < 128; ++i)
-        memset(gram[i], 0, 8*sizeof(uint8_t));
+        memset(oledBuffer[i], 0, 8 * sizeof(uint8_t));
     memset(PrintMenuText, 0, sizeof(PrintMenuText));
     memset(ButtonPressed, 0, sizeof(ButtonPressed));
     memset(ButtonMoveLeft, 0, sizeof(ButtonMoveLeft));
@@ -364,7 +364,7 @@ OLED_Menu::OLED_Menu() :device(&OLED::_oled_device), currentCursorLine(0){
  */
 OLED_Menu::~OLED_Menu(){
 		device->Clear(Pen_Clear);
-		device->RefreshGram();
+    device->OLEDRefreshBuffer();
 		device->DisplayOff();
 }
 
@@ -460,7 +460,7 @@ void OLED_Menu::PrintGB2312_Char(uint8_t x, uint8_t y, const char* chr){
 }
 
 /**
- * @brief Print a string(Chinese supported) at the whole screen and refresh the gram immediately.
+ * @brief Print a string(Chinese supported) at the whole screen and refresh the oledBuffer immediately.
  * @param str: The string to be put
  * @return (None)
  */
@@ -498,7 +498,7 @@ void OLED_Menu::PrintString(const char *str){
             }
         }
     }
-		//device->RefreshGram();
+		//device->OLEDRefreshBuffer();
 }
 
 /**
@@ -556,7 +556,7 @@ void OLED_Menu::Init(){
 	memset(ADC_Val, 0, sizeof(ADC_Val));
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC_Val, ADC_CHANNALS);
 	device->Clear(Pen_Clear);
-    device->RefreshGram();
+    device->OLEDRefreshBuffer();
 }
 
 /**
@@ -606,7 +606,7 @@ void OLED_Menu::Update(){
     }
     for(uint8_t i = 0; i < 4; ++i)
         device->DrawLine(0, dividingLineY[i], 127, dividingLineY[i], Pen_Write);
-    device->RefreshGram();
+    device->OLEDRefreshBuffer();
 }
 
 /**

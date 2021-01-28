@@ -58,13 +58,13 @@
 //protected:
 //    GPIO_TypeDef *DC_Port, *Rst_Port;
 //    uint16_t DC_Pin, Rst_Pin;
-//    uint8_t gram[128][64];
+//    uint8_t oledBuffer[128][64];
 //
 //    void CmdSet() {HAL_GPIO_WritePin(DC_Port, DC_Pin, GPIO_PIN_SET);}
 //    void CmdClr() {HAL_GPIO_WritePin(DC_Port, DC_Pin, GPIO_PIN_RESET);}
 //    void RstSet() {HAL_GPIO_WritePin(Rst_Port, Rst_Pin, GPIO_PIN_SET);}
 //    void RstClr() {HAL_GPIO_WritePin(Rst_Port, Rst_Pin, GPIO_PIN_RESET);}
-//    void WriteByte(uint8_t dat, uint8_t cmd);
+//    void OLEDWriteByte(uint8_t dat, uint8_t cmd);
 //    void SetCursor(uint8_t x, uint8_t y);
 //
 //public:
@@ -72,17 +72,17 @@
 //
 //    OLED() : DC_Port(OLED_DC_GPIO_Port), Rst_Port(OLED_RST_GPIO_Port), DC_Pin(OLED_DC_Pin), Rst_Pin(OLED_RST_Pin) {
 //        for(uint8_t i = 0; i < 128; ++i)
-//            memset(gram[i], 0, 64*sizeof(uint8_t));
+//            memset(oledBuffer[i], 0, 64*sizeof(uint8_t));
 //    }
 //    OLED(GPIO_TypeDef *_DC_Port, uint16_t _DC_Pin, GPIO_TypeDef *_Rst_Port, uint16_t _Rst_Pin) : DC_Port(_DC_Port), Rst_Port(_Rst_Port), DC_Pin(_DC_Pin), Rst_Pin(_Rst_Pin) {
 //        for(uint8_t i = 0; i < 128; ++i)
-//            memset(gram[i], 0, 64*sizeof(uint8_t));
+//            memset(oledBuffer[i], 0, 64*sizeof(uint8_t));
 //    }
 //    ~OLED();
 //    void Init();
 //    void DisplayOn();
 //    void DisplayOff();
-//    void RefreshGram();
+//    void OLEDRefreshBuffer();
 //
 //    void Clear(Pen_e pen);
 //    void Clear(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height);

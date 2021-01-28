@@ -44,7 +44,12 @@ void Robot::Reset() {
     rt_thread_startup(led2Thread);
 
     OLED_UI::oled_ui.Init();
-    oled_LOGO();
+    OLED::_oled_device.Clear(Pen_Clear);
+    OLED::_oled_device.DrawLine(0, 0, 100, 50, Pen_Write);
+    OLED::_oled_device.ShowLOGO();
+    //OLED::_oled_device.PrintString(2,0,"Hello");
+    //OLED::_oled_device.DrawProgressBar(5, 50, 100, 10, 40);
+    OLED::_oled_device.OLEDRefreshBuffer();
 }
 
 void Robot::Handle() {
