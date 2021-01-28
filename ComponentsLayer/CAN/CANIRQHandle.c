@@ -3,8 +3,7 @@
 //
 
 #include "includes.h"
-
-extern void CANCommunicationRxIRQHandler(CAN_HandleTypeDef *hcan);
+#include "CANCommunication.h"
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
     CANCommunicationRxIRQHandler(hcan);

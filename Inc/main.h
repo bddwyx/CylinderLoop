@@ -64,6 +64,8 @@ void Error_Handler(void);
 #define Cap_In_GPIO_Port GPIOE
 #define Cap_Out_Pin GPIO_PIN_5
 #define Cap_Out_GPIO_Port GPIOE
+#define OLED_DC_Pin GPIO_PIN_9
+#define OLED_DC_GPIO_Port GPIOB
 #define DC24V_2_Pin GPIO_PIN_2
 #define DC24V_2_GPIO_Port GPIOH
 #define DC24V_3_Pin GPIO_PIN_3
@@ -94,6 +96,8 @@ void Error_Handler(void);
 #define LED_RED_GPIO_Port GPIOE
 #define LED_GREEN_Pin GPIO_PIN_14
 #define LED_GREEN_GPIO_Port GPIOF
+#define OLED_RST_Pin GPIO_PIN_10
+#define OLED_RST_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

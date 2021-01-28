@@ -4,6 +4,7 @@
 
 #include "includes.h"
 
+#ifdef __cplusplus
 enum CANCommunicationTestMode{
     NORMAL = CAN_MODE_NORMAL,
     LOOPBACK = CAN_MODE_LOOPBACK,
@@ -28,7 +29,16 @@ private:
     CAN_HandleTypeDef* hcan;
     bool CANOnline[2] = {false};
 };
+#endif //_cplusplus
 
-extern "C" void CANCommunicationRxIRQHandler(CAN_HandleTypeDef *hcan);
+#ifdef __cplusplus
+extern "C" {
+#endif //_cplusplus
+
+void CANCommunicationRxIRQHandler(CAN_HandleTypeDef *hcan);
+
+#ifdef __cplusplus
+}
+#endif //_cplusplus
 
 #endif //CYLINDERLOOP_CANCOMMUNICATION_H

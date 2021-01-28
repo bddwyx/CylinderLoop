@@ -48,15 +48,18 @@ endif ()
 
 include_directories(Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include
         Includes
-        ComponentsLayer/CAN ComponentsLayer/OLED
+        ComponentsLayer ComponentsLayer/CAN ComponentsLayer/OLED
         Services/SelfTest Services/CommandSystem
+        Frame/Robot
         )
 
 add_definitions(-D__weak=__attribute__\(\(weak\)\) -D__packed=__attribute__\(\(__packed__\)\) -DUSE_HAL_DRIVER -DSTM32F427xx)
 
 file(GLOB_RECURSE SOURCES "startup/*.*" "Drivers/*.*" "Src/*.*"
         "ComponentsLayer/*.*"
-        "Services/*.*")
+        "Services/*.*"
+        "Frame/*.*"
+        )
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F427IIHx_FLASH.ld)
 

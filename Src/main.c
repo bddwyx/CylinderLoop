@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "can.h"
 #include "dma.h"
 #include "spi.h"
@@ -29,7 +30,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "RobotTask.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,7 +62,17 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == htim6.Instance) {
+        //HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
+        MainControlLoop();
+        //oled_menu->Update();
+        //HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+    }
+    if(htim->Instance == htim7.Instance) {
+        //RemoteKeyMouseControlLoop();
+    }
+}
 /* USER CODE END 0 */
 
 /**
@@ -103,8 +114,11 @@ int main(void)
   MX_TIM7_Init();
   MX_USART3_UART_Init();
   MX_USART2_UART_Init();
+  MX_SPI1_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-
+    MainInit();
+    HAL_TIM_Base_Start_IT(&htim6);
   /* USER CODE END 2 */
 
   /* Infinite loop */

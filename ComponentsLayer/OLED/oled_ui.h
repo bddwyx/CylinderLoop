@@ -20,18 +20,19 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "iwdg.h"
+//#include "iwdg.h"
 #include "adc.h"
 #include <cmath>
-#include "dac.h"
+//#include "dac.h"
 
-#include "BoardConfiguration.h"
-#include "RobotConfiguration.h"
+//#include "BoardConfiguration.h"
+//#include "RobotConfiguration.h"
 
 #include "oled.h"
 #include <cstdarg>
 #include <type_traits>
 #include <initializer_list>
+#include <stdio.h>
 
 /**
  * 128*64 pixels. ~ASCII: 12*6; GB2312: 12*12
