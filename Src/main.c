@@ -77,7 +77,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
 
-
 }
 
 void HAL_Delay(uint32_t Delay){

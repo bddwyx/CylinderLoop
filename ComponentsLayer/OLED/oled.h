@@ -2,8 +2,8 @@
   ******************************************************************************
   * @FileName               oled.h
   * @Description            OLED class with basic operating functions
-  * @author                 Liu Qi (purewhite@sjtu.edu.cn)
-  * @note                   UNSTABLE VERSION!
+  * @author                 Xi Wang
+  * @note
   ******************************************************************************
   *
   * Copyright (c) 2021 Team JiaoLong-ShanghaiJiaoTong University
@@ -26,7 +26,6 @@
 
 #ifndef __OLED_H
 #define __OLED_H
-#define USE_DJI_EXAMPLE_CODE
 
 #include "stm32f4xx.h"
 #include "spi.h"
@@ -50,9 +49,6 @@
 
 constexpr uint8_t PowOf2[8] = {0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
 
-#ifdef USE_DJI_EXAMPLE_CODE
-static uint8_t oledBuffer[8][128] = {0};
-#endif
 /***	TYPE DEFINE	***/
 
 typedef enum{
@@ -67,9 +63,7 @@ class OLED{
     protected:
         GPIO_TypeDef *DC_Port, *Rst_Port;
         uint16_t DC_Pin, Rst_Pin;
-				#ifndef USE_DJI_EXAMPLE_CODE
-        uint8_t oledBuffer[128][8];
-				#endif
+        uint8_t oledBuffer[8][128];
         void Error(const char* msg, uint8_t code);
 
         void CmdSet() {HAL_GPIO_WritePin(DC_Port, DC_Pin, GPIO_PIN_SET);}
@@ -84,8 +78,7 @@ class OLED{
 
         OLED() : DC_Port(OLED_DC_GPIO_Port), Rst_Port(OLED_RST_GPIO_Port), DC_Pin(OLED_DC_Pin), Rst_Pin(OLED_RST_Pin) {}
         OLED(GPIO_TypeDef *_DC_Port, uint16_t _DC_Pin, GPIO_TypeDef *_Rst_Port, uint16_t _Rst_Pin) : DC_Port(_DC_Port), Rst_Port(_Rst_Port), DC_Pin(_DC_Pin), Rst_Pin(_Rst_Pin) {
-            //for(int i = 0; i < 8; ++i)
-                //memset(oledBuffer[i], 0, 128 * sizeof(uint8_t));
+            for(int i = 0; i < 8; ++i) memset(oledBuffer[i], 0, 128 * sizeof(uint8_t));
         }
         ~OLED();
         void Init();
@@ -112,28 +105,10 @@ class OLED{
         void PrintString(uint8_t row, uint8_t col, const char *chr);
         void printf(uint8_t row, uint8_t col, const char *fmt,...);
         void ShowLOGO();
+
+        void OLEDRefresh();
 };
 
-/***	SPECIFIC INIT CONFIGURATION	***/
 
-/***	EXTERNAL VARIABLES	***/
-
-/***	APIs	***/
-// These functions are copied from dji official example.
-#ifdef USE_DJI_EXAMPLE_CODE
-void oled_init(void);
-void oled_write_byte(uint8_t dat, uint8_t cmd);
-void oled_display_on(void);
-void oled_display_off(void);
-void oled_refresh_gram(void);
-void oled_clear(Pen_e pen);
-void oled_drawpoint(uint8_t x, uint8_t y, Pen_e pen);
-void oled_drawline(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, Pen_e pen);
-void oled_showchar(uint8_t row, uint8_t col, uint8_t chr);
-void oled_shownum(uint8_t row, uint8_t col, uint32_t num, uint8_t mode, uint8_t len);
-void oled_showstring(uint8_t row, uint8_t col, uint8_t *chr);
-void oled_printf(uint8_t row, uint8_t col, const char *fmt,...);
-void oled_LOGO(void);
-#endif
 
 #endif
