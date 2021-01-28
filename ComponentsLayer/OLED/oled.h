@@ -48,10 +48,10 @@
 #define CHAR_SIZE_WIDTH_GB2312 12
 #define CHAR_SIZE_HIGHT_GB2312 12
 
-const uint8_t PowOf2[8] = {0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
+constexpr uint8_t PowOf2[8] = {0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
 
 #ifdef USE_DJI_EXAMPLE_CODE
-static uint8_t oledBuffer[128][8];
+static uint8_t oledBuffer[8][128] = {0};
 #endif
 /***	TYPE DEFINE	***/
 
@@ -84,8 +84,8 @@ class OLED{
 
         OLED() : DC_Port(OLED_DC_GPIO_Port), Rst_Port(OLED_RST_GPIO_Port), DC_Pin(OLED_DC_Pin), Rst_Pin(OLED_RST_Pin) {}
         OLED(GPIO_TypeDef *_DC_Port, uint16_t _DC_Pin, GPIO_TypeDef *_Rst_Port, uint16_t _Rst_Pin) : DC_Port(_DC_Port), Rst_Port(_Rst_Port), DC_Pin(_DC_Pin), Rst_Pin(_Rst_Pin) {
-            for(int i = 0; i < 128; ++i)
-                memset(oledBuffer[i], 0, 8 * sizeof(uint8_t));
+            //for(int i = 0; i < 8; ++i)
+                //memset(oledBuffer[i], 0, 128 * sizeof(uint8_t));
         }
         ~OLED();
         void Init();

@@ -347,8 +347,8 @@ void MenuTerm_Folder::Pressed(uint32_t line) {
  */
 OLED_Menu::OLED_Menu() :device(&OLED::_oled_device), currentCursorLine(0){
     // OLED(_DC_Port, _DC_Pin, _Rst_Port, _Rst_Pin);
-    for(int i = 0; i < 128; ++i)
-        memset(oledBuffer[i], 0, 8 * sizeof(uint8_t));
+    //for(int i = 0; i < 8; ++i)
+        //memset(oledBuffer[i], 0, 128 * sizeof(uint8_t));
     memset(PrintMenuText, 0, sizeof(PrintMenuText));
     memset(ButtonPressed, 0, sizeof(ButtonPressed));
     memset(ButtonMoveLeft, 0, sizeof(ButtonMoveLeft));

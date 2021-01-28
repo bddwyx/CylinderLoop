@@ -142,13 +142,15 @@ void OLED::OLEDRefreshBuffer() {
 	
     for (uint8_t i = 0; i < 8; ++i){
         SetCursor(0, i);
-        for (uint8_t j = 0; j <= 128; ++j){
-            OLEDWriteByte(oledBuffer[j][i], OLED_DATA);
-        }
+        CmdSet();
+        HAL_Delay(1);
+        HAL_SPI_Transmit(&hspi1, &(oledBuffer[i][0]), 2, 1000);
+        HAL_SPI_Transmit_DMA(&hspi1, oledBuffer[i], 128);
+        HAL_Delay(10);
+        //for (uint8_t j = 0; j < 128; ++j){
+        //    OLEDWriteByte(oledBuffer[i][j], OLED_DATA);
+        //}
     }
-
-//    CmdClr();
-//    HAL_SPI_Transmit_DMA(&hspi1, *oledBuffer, 128);
 }
 
 /**
@@ -162,13 +164,13 @@ void OLED::Clear(Pen_e pen) {
         for(uint8_t j = 0; j < 128; ++j){
             switch(pen){
                 case Pen_Write:
-                    oledBuffer[j][i] = 0xff;
+                    oledBuffer[i][j] = 0xff;
                     break;
                 case Pen_Clear:
-                    oledBuffer[j][i] = 0x00;
+                    oledBuffer[i][j] = 0x00;
                     break;
                 case Pen_Inversion:
-                    oledBuffer[j][i] = 0xff - oledBuffer[j][i];
+                    oledBuffer[i][j] = 0xff - oledBuffer[i][j];
                     break;
                 default:
                     Error("Clear(): Invalid pen type.\n", 2);
@@ -240,13 +242,13 @@ void OLED::DrawPoint(uint8_t x, uint8_t y, Pen_e pen) {
 
     switch(pen){
         case Pen_Clear:
-            oledBuffer[x][page] &= ~(1 << row);
+            oledBuffer[page][x] &= ~(1 << row);
             break;
         case Pen_Write:
-            oledBuffer[x][page] |= 1 << row;
+            oledBuffer[page][x] |= 1 << row;
             break;
         case Pen_Inversion:
-            oledBuffer[x][page] ^= 1 << row;
+            oledBuffer[page][x] ^= 1 << row;
             break;
         default:
             Error("DrawPoint(): Invalid pen type.\n", 2);
@@ -657,7 +659,7 @@ void OLED::ShowLOGO() {
  * @brief   write data/command to OLED
  * @param   dat: the data ready to write
  * @param   cmd: 0x00,command 0x01,data
- * @retval  
+ * @retval
  */
 void oled_write_byte(uint8_t dat, uint8_t cmd)
 {
@@ -674,7 +676,7 @@ void oled_write_byte(uint8_t dat, uint8_t cmd)
  * @brief   set OLED cursor position
  * @param   x: the X-axis of cursor
  * @param   y: the Y-axis of cursor
- * @retval  
+ * @retval
  */
 static void oled_set_pos(uint8_t x, uint8_t y)
 {
@@ -688,7 +690,7 @@ static void oled_set_pos(uint8_t x, uint8_t y)
  * @brief   turn on OLED display
  * @param   None
  * @param   None
- * @retval  
+ * @retval
  */
 void oled_display_on(void)
 {
@@ -701,7 +703,7 @@ void oled_display_on(void)
  * @brief   turn off OLED display
  * @param   None
  * @param   None
- * @retval  
+ * @retval
  */
 void oled_display_off(void)
 {
@@ -714,7 +716,7 @@ void oled_display_off(void)
  * @brief   refresh the RAM of OLED
  * @param   None
  * @param   None
- * @retval  
+ * @retval
  */
 void oled_refresh_gram(void)
 {
@@ -726,7 +728,7 @@ void oled_refresh_gram(void)
 
         for (n = 0; n < 128; n++)
         {
-            oled_write_byte(oledBuffer[n][i], OLED_DATA);
+            oled_write_byte(oledBuffer[i][n], OLED_DATA);
         }
     }
 }
@@ -735,7 +737,7 @@ void oled_refresh_gram(void)
  * @brief   clear the screen
  * @param   None
  * @param   None
- * @retval  
+ * @retval
  */
 void oled_clear(Pen_e pen)
 {
@@ -746,11 +748,11 @@ void oled_clear(Pen_e pen)
         for (n = 0; n < 128; n++)
         {
             if (pen == Pen_Write)
-                oledBuffer[n][i] = 0xff;
+                oledBuffer[i][n] = 0xff;
             else if (pen == Pen_Clear)
-                oledBuffer[n][i] = 0x00;
+                oledBuffer[i][n] = 0x00;
             else
-                oledBuffer[n][i] = 0xff - oledBuffer[n][i];
+                oledBuffer[i][n] = 0xff - oledBuffer[i][n];
         }
     }
 }
@@ -774,11 +776,11 @@ void oled_drawpoint(uint8_t x, uint8_t y, Pen_e pen)
     row = y % 8;
 
     if (pen == Pen_Write)
-        oledBuffer[x][page] |= 1 << row;
+        oledBuffer[page][x] |= 1 << row;
     else if (pen == Pen_Inversion)
-        oledBuffer[x][page] ^= 1 << row;
+        oledBuffer[page][x] ^= 1 << row;
     else
-        oledBuffer[x][page] &= ~(1 << row);
+        oledBuffer[page][x] &= ~(1 << row);
 }
 
 /**
@@ -830,7 +832,7 @@ void oled_drawline(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, Pen_e pen)
 }
 
 
-//To add: rectangle, fillrectangle, circle, fillcircle, 
+//To add: rectangle, fillrectangle, circle, fillcircle,
 
 /**
  * @brief   show a character
@@ -1020,10 +1022,10 @@ void oled_init(void)
     oled_write_byte(0xd3, OLED_CMD);    //set display offset
     oled_write_byte(0x00, OLED_CMD);    //not offest
     oled_write_byte(0xd5, OLED_CMD);    //set display clock divide ratio/oscillator frequency
-    oled_write_byte(0x80, OLED_CMD);    //set divide ratio 
+    oled_write_byte(0x80, OLED_CMD);    //set divide ratio
     oled_write_byte(0xd9, OLED_CMD);    //set pre-charge period
     oled_write_byte(0xf1, OLED_CMD);    //pre-charge: 15 clocks, discharge: 1 clock
-    oled_write_byte(0xda, OLED_CMD);    //set com pins hardware configuration 
+    oled_write_byte(0xda, OLED_CMD);    //set com pins hardware configuration
     oled_write_byte(0x12, OLED_CMD);    //
     oled_write_byte(0xdb, OLED_CMD);    //set vcomh
     oled_write_byte(0x40, OLED_CMD);    //set vcom deselect level
