@@ -61,6 +61,7 @@ class OLED{
 		friend class OLED_Menu;
 		friend class OLED_UI;
     protected:
+        SPI_HandleTypeDef* hspi;
         GPIO_TypeDef *DC_Port, *Rst_Port;
         uint16_t DC_Pin, Rst_Pin;
         uint8_t oledBuffer[8][128];
@@ -76,12 +77,12 @@ class OLED{
     public:
         static OLED _oled_device;
 
-        OLED() : DC_Port(OLED_DC_GPIO_Port), Rst_Port(OLED_RST_GPIO_Port), DC_Pin(OLED_DC_Pin), Rst_Pin(OLED_RST_Pin) {}
-        OLED(GPIO_TypeDef *_DC_Port, uint16_t _DC_Pin, GPIO_TypeDef *_Rst_Port, uint16_t _Rst_Pin) : DC_Port(_DC_Port), Rst_Port(_Rst_Port), DC_Pin(_DC_Pin), Rst_Pin(_Rst_Pin) {
-            for(int i = 0; i < 8; ++i) memset(oledBuffer[i], 0, 128 * sizeof(uint8_t));
-        }
+        OLED(SPI_HandleTypeDef *hspi, GPIO_TypeDef *_DC_Port, uint16_t _DC_Pin, GPIO_TypeDef *_Rst_Port,
+             uint16_t _Rst_Pin);
         ~OLED();
         void Init();
+        friend void OLEDThreadEntry(void* para);
+        void RTThreadInit();
         void DisplayOn();
         void DisplayOff();
         void OLEDRefreshBuffer();

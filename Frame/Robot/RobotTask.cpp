@@ -5,7 +5,6 @@
 #include "RobotTask.h"
 #include "Components.h"
 #include "app_rtthread.h"
-#include "rtconfig.h"
 
 Robot robot;
 
@@ -23,8 +22,18 @@ void thread2Entry(){
     }
 }
 
+void BarThreadEntry(){
+    static uint8_t progress = 0;
+    while(1){
+        OLED::_oled_device.DrawProgressBar(13, 50, 100, 10, progress);
+        progress = ++progress % 100;
+        rt_thread_delay(40);
+    }
+}
+
 static rt_thread_t led1Thread = RT_NULL;
 static rt_thread_t led2Thread = RT_NULL;
+static rt_thread_t BarThread = RT_NULL;
 
 void Robot::Reset() {
     led1Thread = rt_thread_create("led1",
@@ -43,14 +52,21 @@ void Robot::Reset() {
                                   20);
     rt_thread_startup(led2Thread);
 
-    OLED_UI::oled_ui.Init();
-    OLED::_oled_device.Clear(Pen_Clear);
+    BarThread = rt_thread_create("Bar",
+                                  reinterpret_cast<void (*)(void *)>(BarThreadEntry),
+                                  RT_NULL,
+                                  512,
+                                  3,
+                                  20);
+    rt_thread_startup(BarThread);
+
+    OLED::_oled_device.Init();
+    //OLED::_oled_device.Clear(Pen_Clear);
     OLED::_oled_device.ShowLOGO();
     OLED::_oled_device.DrawLine(0, 0, 100, 50, Pen_Write);
     OLED::_oled_device.PrintString(2,0,"Hello");
-    //OLED::_oled_device.DrawProgressBar(5, 50, 100, 10, 40);
-    OLED::_oled_device.Clear(Pen_Inversion);
-    OLED::_oled_device.OLEDRefreshBuffer();
+    //OLED::_oled_device.Clear(Pen_Inversion);
+    //OLED::_oled_device.OLEDRefreshBuffer();
 }
 
 void Robot::Handle() {

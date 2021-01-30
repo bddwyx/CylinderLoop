@@ -13,11 +13,38 @@
 **/
 
 #include "oled.h"
+#include "app_rtthread.h"
 #include "math.h"
 #include <stdio.h>
 #include <stdarg.h>
 
-OLED OLED::_oled_device;
+OLED OLED::_oled_device(&hspi1, OLED_DC_GPIO_Port, OLED_DC_Pin, OLED_RST_GPIO_Port, OLED_RST_Pin);
+
+
+static rt_thread_t OLEDThread = RT_NULL;
+
+void OLEDThreadEntry(void* para){
+    while(1){
+        OLED::_oled_device.OLEDRefresh();
+        rt_thread_delay(5);
+    }
+}
+
+void OLED::RTThreadInit() {
+    auto entry = &OLEDThreadEntry;
+    OLEDThread = rt_thread_create("OLED",
+                                  entry,
+                                  RT_NULL,
+                                  512,
+                                  3,
+                                  2);
+    rt_thread_startup(OLEDThread);
+}
+
+OLED::OLED(SPI_HandleTypeDef *hspi, GPIO_TypeDef *_DC_Port, uint16_t _DC_Pin, GPIO_TypeDef *_Rst_Port,
+           uint16_t _Rst_Pin) : hspi(hspi), DC_Port(_DC_Port), Rst_Port(_Rst_Port), DC_Pin(_DC_Pin), Rst_Pin(_Rst_Pin) {
+    for(int i = 0; i < 8; ++i) memset(oledBuffer[i], 0, 128 * sizeof(uint8_t));
+}
 
  OLED::~OLED() {
     Clear(Pen_Clear);
@@ -50,7 +77,7 @@ void OLED::OLEDWriteByte(uint8_t dat, uint8_t cmd) {
     else
         CmdClr();
     dataBuffer = dat;
-    HAL_SPI_Transmit_DMA(&hspi1, &dataBuffer, 1);
+    HAL_SPI_Transmit_DMA(hspi, &dataBuffer, 1);
 }
 
 /**
@@ -109,6 +136,8 @@ void OLED::Init() {
 
     Clear(Pen_Clear);
     SetCursor(0, 0);
+
+    RTThreadInit();
 }
 
 /**
@@ -143,8 +172,8 @@ void OLED::OLEDRefreshBuffer() {
     for (uint8_t i = 0; i < 8; ++i){
         SetCursor(0, i);
         CmdSet();
-        HAL_SPI_Transmit(&hspi1, &(oledBuffer[i][0]), 2, 1000);
-        HAL_SPI_Transmit_DMA(&hspi1, oledBuffer[i], 128);
+        HAL_SPI_Transmit(hspi, &(oledBuffer[i][0]), 2, 1000);
+        HAL_SPI_Transmit_DMA(hspi, oledBuffer[i], 128);
         HAL_Delay(10);
     }
 }
@@ -289,8 +318,6 @@ void OLED::DrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, Pen_e pen) {
             DrawPoint(col, (uint8_t)(col * k + b), pen);
     }
 }
-
-// TODO: add rectangle, fillrectangle, circle, fillcircle (dji didn`t develop.)
 
 /**
  * @brief Draw the border of a rectangle at the given location
@@ -649,9 +676,9 @@ void OLED::OLEDRefresh() {
 
     SetCursor(0, row);
     CmdSet();
-    HAL_SPI_Transmit(&hspi1, &(oledBuffer[row][0]), 2, 1000);
-    HAL_SPI_Transmit_DMA(&hspi1, oledBuffer[row], 128);
+    HAL_SPI_Transmit(hspi, &(oledBuffer[row][0]), 2, 1000);
+    HAL_SPI_Transmit_DMA(hspi, oledBuffer[row], 128);
 
     row++;
-    row %= Y_WIDTH / 8 - 1;
+    row %= Y_WIDTH / 8;
 }
