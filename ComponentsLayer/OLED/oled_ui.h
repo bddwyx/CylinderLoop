@@ -127,7 +127,7 @@ public:
     void CursorMoveUp();
     void CursorMoveDown();
 		
-		void Refresh() { device.OLEDRefreshBuffer();}
+		void Refresh() { device.OLEDBurstRefresh();}
 };
 
 class MenuTerm_Folder: public MenuTerm_Base{

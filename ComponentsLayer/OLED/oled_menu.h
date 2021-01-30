@@ -82,7 +82,7 @@
 //    void Init();
 //    void DisplayOn();
 //    void DisplayOff();
-//    void OLEDRefreshBuffer();
+//    void OLEDBurstRefresh();
 //
 //    void Clear(Pen_e pen);
 //    void Clear(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height);

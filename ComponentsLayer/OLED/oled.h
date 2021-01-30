@@ -85,7 +85,8 @@ class OLED{
         void RTThreadInit();
         void DisplayOn();
         void DisplayOff();
-        void OLEDRefreshBuffer();
+        void OLEDRefresh();
+        void OLEDBurstRefresh();
 
         void Clear(Pen_e pen);
         void Clear(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height);
@@ -106,8 +107,6 @@ class OLED{
         void PrintString(uint8_t row, uint8_t col, const char *chr);
         void printf(uint8_t row, uint8_t col, const char *fmt,...);
         void ShowLOGO();
-
-        void OLEDRefresh();
 };
 
 

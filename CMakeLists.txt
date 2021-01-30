@@ -47,7 +47,7 @@ else ()
 endif ()
 
 include_directories(Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include
-        Middlewares/Third_Party/RT-Thread//include/
+        Middlewares/Third_Party/RT-Thread//include/ Middlewares/Third_Party/FatFs/src
         Includes
         ComponentsLayer ComponentsLayer/CAN ComponentsLayer/OLED
         Services/SelfTest Services/CommandSystem

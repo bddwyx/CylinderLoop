@@ -23,6 +23,7 @@
 #include "adc.h"
 #include "can.h"
 #include "dma.h"
+#include "fatfs.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -125,6 +126,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   MX_ADC1_Init();
+  MX_FATFS_Init();
   MX_RT_Thread_Init();
   /* USER CODE BEGIN 2 */
     MainInit();
