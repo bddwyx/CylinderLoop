@@ -111,15 +111,7 @@ void Robot::Reset() {
                                   20);
     rt_thread_startup(BarThread);
 
-    OLED::_oled_device.Init();
-    //OLED::_oled_device.Clear(Pen_Clear);
-    OLED::_oled_device.ShowLOGO();
-    OLED::_oled_device.DrawLine(0, 0, 100, 50, Pen_Write);
-    const char* a = new char [4]{0xD2, 0xBB, 0, 0};
-    OLED::_oled_device.PrintString(2, 0, a);
-    //LED::_oled_device.printf(2, 0, "hello");
-    //OLED::_oled_device.Clear(Pen_Inversion);
-    //OLED::_oled_device.OLEDBurstRefresh();
+    OLED::_oled_device.ShowTest();
 }
 
 void Robot::Handle() {

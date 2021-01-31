@@ -1,4 +1,4 @@
-#include "oled.h"
+#include "OLED.h"
 
 /**
  * @brief Draws a rectangular progress bar with the outer dimensions given by width and height
@@ -36,4 +36,18 @@ void OLED::DrawImage(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, cons
             }
         }
     }
+}
+
+void OLED::ShowTest(){
+    OLED::_oled_device.Init();
+
+    memcpy(oledBuffer, oledLib_Hero_invert, 1024);
+
+    OLED::_oled_device.FullScreenOperation(Pen_Inversion);
+    //OLED::_oled_device.DrawLine(0, 0, 100, 50, Pen_Write);
+    const char* a = new char [4]{0xD2, 0xBB, 0, 0};
+    //OLED::_oled_device.PrintString(2, 0, a);
+    //LED::_oled_device.printf(2, 0, "hello");
+    //OLED::_oled_device.Clear(Pen_Inversion);
+    //OLED::_oled_device.OLEDBurstRefresh();
 }

@@ -12,7 +12,7 @@
   ******************************************************************************
 **/
 
-#include "oled.h"
+#include "OLED.h"
 #include "rtthread.h"
 
 /**
@@ -111,22 +111,35 @@ void OLED::SetCursor(uint8_t x, uint8_t y) {
     OLEDWriteByte((x & 0xf0), OLED_CMD);
 }
 
+void OLED::Reset() {
+    HAL_GPIO_WritePin(Rst_Port, Rst_Pin, GPIO_PIN_RESET);
+    HAL_Delay(100);
+    HAL_GPIO_WritePin(Rst_Port, Rst_Pin, GPIO_PIN_SET);
+}
+
 /**
  * @brief Initialize the oled module
  * @param (None)
  * @return (None)
  */
 void OLED::Init() {
-    RstClr();
-    HAL_Delay(500);
-    RstSet();
+    uint8_t initSerial[] = {
+            0xae,   //turn off oled panel
+            0x00,   //set low column address
+            0x10,   //set high column address
+            0x40,   //set start line address
+            0x81,   //set contrast control resigter
+            0xcf,   //set SEG output current brightness
+            0xa1,   //set SEG/column mapping
+    };
 
+    Reset();
     OLEDWriteByte(0xae, OLED_CMD);    //turn off oled panel
     OLEDWriteByte(0x00, OLED_CMD);    //set low column address
     OLEDWriteByte(0x10, OLED_CMD);    //set high column address
     OLEDWriteByte(0x40, OLED_CMD);    //set start line address
     OLEDWriteByte(0x81, OLED_CMD);    //set contrast control resigter
-    OLEDWriteByte(0xcf, OLED_CMD);    //set SEG output current brightness
+    OLEDWriteByte(0x1f, OLED_CMD);    //set SEG output current brightness
     OLEDWriteByte(0xa1, OLED_CMD);    //set SEG/column mapping
     OLEDWriteByte(0xc8, OLED_CMD);    //set COM/row scan direction
     OLEDWriteByte(0xa6, OLED_CMD);    //set nomarl display
@@ -145,14 +158,14 @@ void OLED::Init() {
     OLEDWriteByte(0x20, OLED_CMD);    //set page addressing mode
     OLEDWriteByte(0x02, OLED_CMD);    //
     OLEDWriteByte(0x8d, OLED_CMD);    //set charge pump enable/disable
-    OLEDWriteByte(0x14, OLED_CMD);    //charge pump disable
+    OLEDWriteByte(0x14, OLED_CMD);    //charge pump enable
     OLEDWriteByte(0xa4, OLED_CMD);    //disable entire dispaly on
     OLEDWriteByte(0xa6, OLED_CMD);    //disable inverse display on
     OLEDWriteByte(0xaf, OLED_CMD);    //turn on oled panel
 
     OLEDWriteByte(0xaf, OLED_CMD);    //display on
 
-    Clear(Pen_Clear);
+    FullScreenOperation(Pen_Clear);
     SetCursor(0, 0);
 
     RTThreadInit();
@@ -164,7 +177,7 @@ void OLED::Init() {
  */
 void OLED::DisplayOn() {
     OLEDWriteByte(0x8d, OLED_CMD);//set charge pump enable/disable
-    OLEDWriteByte(0x14, OLED_CMD);//charge pump disable
+    OLEDWriteByte(0x14, OLED_CMD);//charge pump enable
     OLEDWriteByte(0xaf, OLED_CMD);//turn on oled panel
 }
 
@@ -173,9 +186,9 @@ void OLED::DisplayOn() {
  * @return (None)
  */
 void OLED::DisplayOff() {
-    OLEDWriteByte(0x8d, OLED_CMD);
-    OLEDWriteByte(0x10, OLED_CMD);
-    OLEDWriteByte(0xae, OLED_CMD);
+    OLEDWriteByte(0x8d, OLED_CMD);//set charge pump enable/disable
+    OLEDWriteByte(0x10, OLED_CMD);//charge pump disable
+    OLEDWriteByte(0xae, OLED_CMD);//turn off oled panel
 }
 
 /**
@@ -206,33 +219,6 @@ void OLED::OLEDBurstRefresh() {
         HAL_SPI_Transmit(hspi, &(oledBuffer[i][0]), 2, 1000);
         HAL_SPI_Transmit_DMA(hspi, oledBuffer[i], 128);
         HAL_Delay(10);
-    }
-}
-
-/**
- * @brief Clear the screen
- * @param (None)
- * @return (None)
- */
-void OLED::Clear(Pen_e pen) {
-
-    for(uint8_t i = 0; i < 8; ++i){
-        for(uint8_t j = 0; j < 128; ++j){
-            switch(pen){
-                case Pen_Write:
-                    oledBuffer[i][j] = 0xff;
-                    break;
-                case Pen_Clear:
-                    oledBuffer[i][j] = 0x00;
-                    break;
-                case Pen_Inversion:
-                    oledBuffer[i][j] = 0xff - oledBuffer[i][j];
-                    break;
-                default:
-                    Error("Clear(): Invalid pen type.\n", 2);
-										return;
-            }
-        }
     }
 }
 

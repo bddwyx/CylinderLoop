@@ -31,7 +31,8 @@
 #include "spi.h"
 #include <stdint.h>
 #include <string.h>
-#include "oled_font.h"
+#include "OLEDGraphicLib_font.h"
+#include "OLEDGraphicLib_figure.h"
 
 /***	MAP	***/
 
@@ -69,8 +70,7 @@ class OLED{
 
         void CmdSet() {HAL_GPIO_WritePin(DC_Port, DC_Pin, GPIO_PIN_SET);}
         void CmdClr() {HAL_GPIO_WritePin(DC_Port, DC_Pin, GPIO_PIN_RESET);}
-        void RstSet() {HAL_GPIO_WritePin(Rst_Port, Rst_Pin, GPIO_PIN_SET);}
-        void RstClr() {HAL_GPIO_WritePin(Rst_Port, Rst_Pin, GPIO_PIN_RESET);}
+        void Reset();
         void OLEDWriteByte(uint8_t dat, uint8_t cmd);
         void SetCursor(uint8_t x, uint8_t y);
 
@@ -88,7 +88,7 @@ class OLED{
         void OLEDRefresh();
         void OLEDBurstRefresh();
 
-        void Clear(Pen_e pen);
+        void FullScreenOperation(Pen_e pen);
         void Clear(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height);
         void Invert(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height);
         void DrawPoint(uint8_t x, uint8_t y, Pen_e pen);
@@ -106,7 +106,8 @@ class OLED{
         void PrintNum(uint8_t row, uint8_t col, int32_t num, uint8_t mode, uint8_t len);
         void PrintString(uint8_t row, uint8_t col, const char *chr);
         void printf(uint8_t row, uint8_t col, const char *fmt,...);
-        void ShowLOGO();
+
+        void ShowTest();
 };
 
 

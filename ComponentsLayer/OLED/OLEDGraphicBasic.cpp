@@ -1,4 +1,29 @@
-#include "oled.h"
+#include "OLED.h"
+
+/**
+ * @brief Clear, write or invert the hole screen
+ * @return (None)
+ */
+void OLED::FullScreenOperation(Pen_e pen) {
+    for(uint8_t i = 0; i < 8; ++i){
+        for(uint8_t j = 0; j < 128; ++j){
+            switch(pen){
+                case Pen_Write:
+                    oledBuffer[i][j] = 0xff;
+                    break;
+                case Pen_Clear:
+                    oledBuffer[i][j] = 0x00;
+                    break;
+                case Pen_Inversion:
+                    oledBuffer[i][j] = 0xff - oledBuffer[i][j];
+                    break;
+                default:
+                    Error("Clear(): Invalid pen type.\n", 2);
+                    return;
+            }
+        }
+    }
+}
 
 /**
  * @brief Draw a point of specific pen at (x, y)
@@ -155,26 +180,3 @@ void OLED::FillCircle(uint8_t x0, uint8_t y0, uint8_t radius, Pen_e pen){
     } while (x < y);
     DrawLine(x0 - radius, y0, x0 + radius, y0, pen);
 }
-
-/**
- * @brief Show the logo of dji Robomaster
- * @return (None)
- * @note the LOGO_BMP is removed from oled.h, thus this function is abandoned.
- */
-void OLED::ShowLOGO() {
-    Clear(Pen_Clear);
-    uint8_t temp_char = 0;
-    uint8_t x = 0, y = 0;
-    uint8_t i = 0;
-    for(; y < 64; y += 8){
-        for(x = 0; x < 128; ++x){
-            temp_char = LOGO_BMP[x][y/8];
-            for(i = 0; i < 8; ++i){
-                if(temp_char & 0x80) DrawPoint(x, y + i,Pen_Write);
-                else DrawPoint(x,y + i,Pen_Clear);
-                temp_char <<= 1;
-            }
-        }
-    }
-}
-

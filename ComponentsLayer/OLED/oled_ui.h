@@ -28,7 +28,7 @@
 //#include "BoardConfiguration.h"
 //#include "RobotConfiguration.h"
 
-#include "oled.h"
+#include "OLED.h"
 #include <cstdarg>
 #include <type_traits>
 #include <initializer_list>
