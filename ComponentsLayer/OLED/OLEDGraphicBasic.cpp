@@ -32,7 +32,7 @@ void OLED::FullScreenOperation(Pen_e pen) {
  * @param pen: Pen_Clear, Pen_Write, Pen_Inversion @Pen_e, the type of the pen
  * @return (None)
  */
-void OLED::DrawPoint(uint8_t x, uint8_t y, Pen_e pen) {
+inline void OLED::DrawPoint(uint8_t x, uint8_t y, Pen_e pen) {
     uint8_t page = 0, row = 0;
 
     /* check the corrdinate */
@@ -60,6 +60,48 @@ void OLED::DrawPoint(uint8_t x, uint8_t y, Pen_e pen) {
 }
 
 /**
+ * @brief Clear a given area
+ * @param x: the X coordinate of upper-left point of the area
+ * @param y: the Y coordinate of upper-left point of the area
+ * @param width: the width the area
+ * @param height: the height of the area
+ * @return (None)
+ */
+void OLED::Clear(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height){
+    //uint8_t page, row;
+    for(uint8_t x = x0; x < x0+width; ++x)
+        for(uint8_t y = y0; y < y0+height; ++y){
+            /*
+    page = y / 8;
+                row = y % 8;
+    oledBuffer[x][page] ^= PowOf2[row];
+            */
+            DrawPoint(x, y, Pen_Clear);
+        }
+}
+
+/**
+ * @brief Invert the color of pixels in a given area
+ * @param x: the X coordinate of upper-left point of the area
+ * @param y: the Y coordinate of upper-left point of the area
+ * @param width: the width the area
+ * @param height: the height of the area
+ * @return (None)
+ */
+void OLED::Invert(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height){
+    //uint8_t page, row;
+    for(uint8_t x = x0; x < x0+width; ++x)
+        for(uint8_t y = y0; y < y0+height; ++y){
+            /*
+    page = y / 8;
+                row = y % 8;
+    oledBuffer[x][page] ^= PowOf2[row];
+            */
+            DrawPoint(x, y, Pen_Inversion);
+        }
+}
+
+/**
  * @brief Draw a line from (x1, y1) to (x2, y2)
  * @param x1, y1: the start point of line
  * @param x2, y2: the end of line
@@ -68,31 +110,31 @@ void OLED::DrawPoint(uint8_t x, uint8_t y, Pen_e pen) {
  */
 void OLED::DrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, Pen_e pen) {
     uint8_t col = 0, row = 0;
-    uint8_t x_st = 0, x_ed = 0, y_st = 0, y_ed = 0;
+    uint8_t xStart = 0, xEnd = 0, yStart = 0, yEnd = 0;
     float k = 0.0f, b = 0.0f;
 
     if(y1 == y2){
-        (x1 <= x2) ? (x_st = x1):(x_st = x2);
-        (x1 <= x2) ? (x_ed = x2):(x_ed = x1);
+        (x1 <= x2) ? (xStart = x1):(xStart = x2);
+        (x1 <= x2) ? (xEnd = x2) : (xEnd = x1);
 
-        for (col = x_st; col <= x_ed; col++)
+        for (col = xStart; col <= xEnd; col++)
             DrawPoint(col, y1, pen);
     }
     else if(x1 == x2){
-        (y1 <= y2) ? (y_st = y1):(y_st = y2);
-        (y1 <= y2) ? (y_ed = y2):(y_ed = y1);
+        (y1 <= y2) ? (yStart = y1) : (yStart = y2);
+        (y1 <= y2) ? (yEnd = y2) : (yEnd = y1);
 
-        for (row = y_st; row <= y_ed; row++)
+        for (row = yStart; row <= yEnd; row++)
             DrawPoint(x1, row, pen);
     }
     else{
         k = ((float)(y2 - y1)) / (x2 - x1);
         b = (float)y1 - k * x1;
 
-        (x1 <= x2) ? (x_st = x1):(x_st = x2);
-        (x1 <= x2) ? (x_ed = x2):(x_ed = x2);
+        (x1 <= x2) ? (xStart = x1):(xStart = x2);
+        (x1 <= x2) ? (xEnd = x2) : (xEnd = x2);
 
-        for (col = x_st; col <= x_ed; ++col)
+        for (col = xStart; col <= xEnd; ++col)
             DrawPoint(col, (uint8_t)(col * k + b), pen);
     }
 }
@@ -126,57 +168,57 @@ void OLED::FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, Pe
 }
 
 /**
- * @brief Draw the border of a circle
- * @param x0,y0: coordinate of the center of the rectangle
+ * @brief Draw the border of a circle, using Bresenham algorithm
+ * @param xo,yo: coordinate of the center of the rectangle
  * @param radius: radius of the circle
  * @param pen: Pen_Clear, Pen_Write, Pen_Inversion @Pen_e, the type of the pen
  * @return (None)
  */
-void OLED::DrawCircle(uint8_t x0, uint8_t y0, uint8_t radius, Pen_e pen){
+void OLED::DrawCircle(uint8_t xo, uint8_t yo, uint8_t radius, Pen_e pen){
     int8_t x = 0, y = radius;
     int8_t dp = 1 - radius;
-    do {
+    do {                                           //Bresenham algorithm
         if (dp < 0)
-            dp = dp + (x++) * 2 + 3;    // TODO: What does it mean?
+            dp = dp + (x++) * 2 + 3;
         else
             dp = dp + (x++) * 2 - (y--) * 2 + 5;
 
-        DrawPoint(x0 + x, y0 + y, pen);     //For the 8 octants
-        DrawPoint(x0 - x, y0 + y, pen);
-        DrawPoint(x0 + x, y0 - y, pen);
-        DrawPoint(x0 - x, y0 - y, pen);
-        DrawPoint(x0 + y, y0 + x, pen);
-        DrawPoint(x0 - y, y0 + x, pen);
-        DrawPoint(x0 + y, y0 - x, pen);
-        DrawPoint(x0 - y, y0 - x, pen);
+        DrawPoint(xo + x, yo + y, pen);
+        DrawPoint(xo - x, yo + y, pen);
+        DrawPoint(xo + x, yo - y, pen);
+        DrawPoint(xo - x, yo - y, pen);
+        DrawPoint(xo + y, yo + x, pen);
+        DrawPoint(xo - y, yo + x, pen);
+        DrawPoint(xo + y, yo - x, pen);
+        DrawPoint(xo - y, yo - x, pen);
     } while (x < y);
 
-    DrawPoint(x0 + radius, y0, pen);
-    DrawPoint(x0, y0 + radius, pen);
-    DrawPoint(x0 - radius, y0, pen);
-    DrawPoint(x0, y0 - radius, pen);
+    DrawPoint(xo + radius, yo, pen);
+    DrawPoint(xo, yo + radius, pen);
+    DrawPoint(xo - radius, yo, pen);
+    DrawPoint(xo, yo - radius, pen);
 }
 
 /**
- * @brief Draw a filled circle
- * @param x0,y0: coordinate of the center of the rectangle
+ * @brief Draw a filled circle, using Bresenham algorithm
+ * @param xo,yo: coordinate of the center of the rectangle
  * @param radius: radius of the circle
  * @param pen: Pen_Clear, Pen_Write, Pen_Inversion @Pen_e, the type of the pen
  * @return (None)
  */
-void OLED::FillCircle(uint8_t x0, uint8_t y0, uint8_t radius, Pen_e pen){
+void OLED::FillCircle(uint8_t xo, uint8_t yo, uint8_t radius, Pen_e pen){
     int16_t x = 0, y = radius;
     int16_t dp = 1 - radius;
     do{
         if (dp < 0)
-            dp = dp + (x++) * 2 + 3;    // TODO: What does it mean?
+            dp = dp + (x++) * 2 + 3;
         else
             dp = dp + (x++) * 2 - (y--) * 2 + 5;
 
-        DrawLine(x0 - x, y0 - y, x0 + x, y0 - y, pen);
-        DrawLine(x0 - x, y0 + y, x0 + x, y0 + y, pen);
-        DrawLine(x0 - y, y0 - x, x0 + y, y0 - x, pen);
-        DrawLine(x0 - y, y0 + x, x0 + y, y0 + x, pen);
+        DrawLine(xo - x, yo - y, xo + x, yo - y, pen);
+        DrawLine(xo - x, yo + y, xo + x, yo + y, pen);
+        DrawLine(xo - y, yo - x, xo + y, yo - x, pen);
+        DrawLine(xo - y, yo + x, xo + y, yo + x, pen);
     } while (x < y);
-    DrawLine(x0 - radius, y0, x0 + radius, y0, pen);
+    DrawLine(xo - radius, yo, xo + radius, yo, pen);
 }
