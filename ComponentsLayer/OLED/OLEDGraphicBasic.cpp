@@ -29,10 +29,10 @@ void OLED::FullScreenOperation(Pen_e pen) {
  * @brief Draw a point of specific pen at (x, y)
  * @param x: the X coordinate of cursor
  * @param y: the Y coordinate of cursor
- * @param pen: Pen_Clear, Pen_Write, Pen_Inversion @Pen_e, the type of the pen
+ * @param pen: Pen_Clear, Pen_Write, Pen_Inversion @Pen_e the type of the pen
  * @return (None)
  */
-inline void OLED::DrawPoint(uint8_t x, uint8_t y, Pen_e pen) {
+void OLED::DrawPoint(uint8_t x, uint8_t y, Pen_e pen) {
     uint8_t page = 0, row = 0;
 
     /* check the corrdinate */

@@ -73,18 +73,8 @@ void thread2Entry(void* para){
     }
 }
 
-void BarThreadEntry(void* para){
-    static uint8_t progress = 0;
-    while(1){
-        OLED::_oled_device.DrawProgressBar(13, 50, 100, 10, progress);
-        progress = ++progress % 100;
-        rt_thread_delay(40);
-    }
-}
-
 static rt_thread_t led1Thread = RT_NULL;
 static rt_thread_t led2Thread = RT_NULL;
-static rt_thread_t BarThread = RT_NULL;
 
 void Robot::Reset() {
     led1Thread = rt_thread_create("led1",
@@ -102,14 +92,6 @@ void Robot::Reset() {
                                   3,
                                   20);
     rt_thread_startup(led2Thread);
-
-    BarThread = rt_thread_create("Bar",
-                                  BarThreadEntry,
-                                  RT_NULL,
-                                  512,
-                                  3,
-                                  20);
-    rt_thread_startup(BarThread);
 
     OLED::_oled_device.ShowTest();
 }

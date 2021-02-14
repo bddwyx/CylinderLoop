@@ -110,6 +110,7 @@ void OLED::PrintGB2312_Char(uint8_t row, uint8_t col, const char* chr){
 void OLED::PrintNum(uint8_t row, uint8_t col, int32_t num, uint8_t mode, uint8_t len) {
     uint8_t numberString[16], maxDigit = 0, i, j;
     bool isNegative = (num < 0);
+    if(isNegative) num = -num;
     while(num){
         numberString[maxDigit++] = num % 10;
         num /= 10;
@@ -189,7 +190,7 @@ void OLED::printf(uint8_t row, uint8_t col, const char *fmt, ...) {
     uint8_t remainingSize = 0;
     va_list ap;
 
-    if((row > 4) || (row < 1) || (col > 20) || (col < 1)){
+    if((row > 4) || (row < 0) || (col > 20) || (col < 0)){
         Error("printf(): Invalid coordinate.\n", 1);
         return;
     }

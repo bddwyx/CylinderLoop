@@ -13,42 +13,11 @@
 **/
 
 #include "OLED.h"
-#include "rtthread.h"
 
 /**
  * @note Object of DJI OLED
  */
 OLED OLED::_oled_device(&hspi1, OLED_DC_GPIO_Port, OLED_DC_Pin, OLED_RST_GPIO_Port, OLED_RST_Pin);
-
-static rt_thread_t OLEDThread = RT_NULL;
-
-/**
- * @brief Thread entry of OLED refresh
- * @param para No use
- * @note Multiscreen Application not supported
- * @return (None)
- */
-void OLEDThreadEntry(void* para){
-    while(1){
-        OLED::_oled_device.OLEDRefresh();
-        rt_thread_delay(5);
-    }
-}
-
-/**
- * @brief Start the OLED refresh thread
- * @return (None)
- */
-void OLED::RTThreadInit() {
-    constexpr auto entry = &OLEDThreadEntry;
-    OLEDThread = rt_thread_create("OLED",
-                                  entry,
-                                  RT_NULL,
-                                  512,
-                                  3,
-                                  2);
-    rt_thread_startup(OLEDThread);
-}
 
 /**
  * @brief Constructor of OLED object, define basic hardware information and initialize video memory
